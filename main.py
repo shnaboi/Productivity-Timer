@@ -12,6 +12,10 @@ def breaks_adjusted(value):
   update_final_calc()
   return value
 
+def rest_adjusted(value):
+  calculate_rest_time(value)
+  update_final_calc()
+
 def calc_work_time():
   hours = int(spinbox_hour.get())
   mins = int(spinbox_min.get())
@@ -38,10 +42,12 @@ def update_final_calc():
     final_label.config(text=f"{work_int} min\nwork interval\n"
                             f"{rest_int} min\nrest interval")
   except ZeroDivisionError:
-    final_label.config(text="0 min\nwork interval\n"
-                            "0 min\nrest interval")
-
-
+    if int(breaks_scale.get()) == 0:
+      final_label.config(text=f"{total_work_mins} min\nwork interval\n"
+                              f"0 min\nrest interval")
+    else:
+      final_label.config(text="0 min\nwork interval\n"
+                              "0 min\nrest interval")
 
 
 # UI
@@ -83,7 +89,7 @@ spinbox_min_label.grid(row=5, column=2, sticky=NW)
 # Rest Time
 resting_label = Label(text="Rest Time %", font=SMALL_FONT)
 resting_label.grid(row=3, column=3, sticky=S)
-rest_scale = Scale(orient=HORIZONTAL, to=50, tickinterval=25, command=calculate_rest_time)
+rest_scale = Scale(orient=HORIZONTAL, to=50, tickinterval=25, command=rest_adjusted)
 rest_scale.grid(row=4, column=3, sticky=N)
 # Label: {Convert % to mins to show user}
 rest_time_calc_label = Label(text="0.0\nrest mins", font=SMALL_FONT)
