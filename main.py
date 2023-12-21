@@ -4,6 +4,42 @@ import math
 BIG_FONT = ("Courier New", 23, "bold")
 SMALL_FONT = ("Courier New", 10, "normal")
 
+def start_timer():
+  # calculate work time in seconds
+  work_int, rest_int = update_final_calc()
+  work_sec = round((work_int * 60), 1)
+  rest_sec = round((rest_int * 60), 1)
+  # calculate break time in seconds
+  # determine if timer is on a work interval or break interval
+  # inside each if/else block, countdown(work_int) OR countdown(rest_int) is called
+
+  #  go to def countdown(var)
+  # var should be time left in sec
+  # min = math.floor(var / 60)
+  # sec = (var % 60)
+  # if sec < 10 (put 0:09)
+  # text=f"{min}:0{sec}"
+  # else text=f"{min}:{sec}"
+  # if time_left_sec (var) > 0:
+  # window.after(1000, countdown, time_left_sec (var) -1)
+  # else (if there is no time left)
+  # start_timer() is called,
+  # when it is called it determines which interval is next
+  # and countdown() is called at the end of start_timer()
+
+  work_int, rest_int = update_final_calc()
+  print(work_sec, rest_sec)
+
+def countdown(time_in_sec):
+  pass
+
+def check_start():
+#   Start button not pushable until total time is defined
+  if calc_total_time() == 0:
+    button_start.config(state=DISABLED)
+  else:
+    button_start.config(state=ACTIVE)
+
 def time_adjusted():
   update_final_calc()
   calculate_rest_time(int(rest_scale.get()))
@@ -16,15 +52,15 @@ def rest_adjusted(value):
   calculate_rest_time(value)
   update_final_calc()
 
-def calc_work_time():
+def calc_total_time():
   hours = int(spinbox_hour.get())
   mins = int(spinbox_min.get())
   total_mins = int((hours * 60) + mins)
   return total_mins
 
 def calculate_rest_time(value):
-  total_mins = calc_work_time()
-  final_calc = round(total_mins * (int(value)*.01), 1)
+  total_mins = calc_total_time()
+  final_calc = round(total_mins * (int(value)*.01), 2)
   rest_time_calc_label.config(text=f"{final_calc}\nrest mins")
   return final_calc
 
@@ -34,21 +70,23 @@ def update_final_calc():
 # total time divided by (break amount +1), three 20min sessions
 # 20min work, 10m break, 20min work, 10m break, end with 20min work
   total_rest_mins = calculate_rest_time(int(rest_scale.get()))
-  total_work_mins = calc_work_time() - total_rest_mins
+  total_work_mins = calc_total_time() - total_rest_mins
   break_amount = (int(breaks_scale.get()))
   try:
-    rest_int = round(total_rest_mins / break_amount, 1)
-    work_int = round(total_work_mins / (break_amount + 1), 1)
+    rest_int = round(total_rest_mins / break_amount, 2)
+    work_int = round(total_work_mins / (break_amount + 1), 2)
     final_label.config(text=f"{work_int} min\nwork interval\n"
                             f"{rest_int} min\nrest interval")
+    check_start()
+    return work_int, rest_int
   except ZeroDivisionError:
-    if int(breaks_scale.get()) == 0:
+    if int(breaks_scale.get()) == 0 or int(rest_scale.get()) == 0:
       final_label.config(text=f"{total_work_mins} min\nwork interval\n"
                               f"0 min\nrest interval")
-    else:
-      final_label.config(text="0 min\nwork interval\n"
-                              "0 min\nrest interval")
-
+    # else:
+    #   final_label.config(text="0 min\nwork interval\n"
+    #                           "0 min\nrest interval")
+  check_start()
 
 # UI
 
@@ -104,10 +142,10 @@ breaks_scale.grid(row=4, column=4, sticky=N)
 # Buttons
 buttons_frame = LabelFrame(text="Start/Reset", width=100, height=125)
 buttons_frame.grid(row=6, rowspan=2, column=3)
-button = Button(text="Start", overrelief="groove", pady=2, width=7)
-button.grid(row=6, column=3)
-button2 = Button(text="Reset", overrelief="groove", pady=2, width=7, state=DISABLED)
-button2.grid(row=7, column=3, sticky=N)
+button_start = Button(text="Start", overrelief="groove", pady=2, width=7, command=start_timer, state=DISABLED)
+button_start.grid(row=6, column=3)
+button_reset = Button(text="Reset", overrelief="groove", pady=2, width=7, state=DISABLED)
+button_reset.grid(row=7, column=3, sticky=N)
 
 # Label: Calculate (for total time avail, rest time, and break amount)
 final_frame = LabelFrame(text="Final Calc", width=100, height=125)
