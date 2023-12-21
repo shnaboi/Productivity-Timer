@@ -5,13 +5,21 @@ BIG_FONT = ("Courier New", 23, "bold")
 SMALL_FONT = ("Courier New", 10, "normal")
 
 def start_timer():
-  # calculate work time in seconds
-  work_int, rest_int = update_final_calc()
-  work_sec = round((work_int * 60), 1)
-  rest_sec = round((rest_int * 60), 1)
-  # calculate break time in seconds
+  # calculate work & rest time in seconds
+  work_int, rest_int, breaks = update_final_calc()
+  work_sec = math.floor(work_int * 60)
+  rest_sec = math.floor(rest_int * 60)
+  intervals = breaks * 2 + 1
   # determine if timer is on a work interval or break interval
   # inside each if/else block, countdown(work_int) OR countdown(rest_int) is called
+  if intervals % 2 == 0:
+  #   rest interval
+    countdown(rest_sec)
+    intervals - 1
+  else:
+  #   work interval
+    countdown(work_sec)
+    intervals - 1
 
   #  go to def countdown(var)
   # var should be time left in sec
@@ -27,11 +35,19 @@ def start_timer():
   # when it is called it determines which interval is next
   # and countdown() is called at the end of start_timer()
 
-  work_int, rest_int = update_final_calc()
   print(work_sec, rest_sec)
 
 def countdown(time_in_sec):
-  pass
+  min = math.floor(time_in_sec / 60)
+  sec = (time_in_sec % 60)
+  if sec < 10:
+    timer_label.config(text=f"{min}:0{sec}")
+  else:
+    timer_label.config(text=f"{min}:{sec}")
+  if time_in_sec >= 0:
+    window.after(1000, countdown, time_in_sec - 1)
+  else:
+    start_timer()
 
 def check_start():
 #   Start button not pushable until total time is defined
@@ -78,7 +94,7 @@ def update_final_calc():
     final_label.config(text=f"{work_int} min\nwork interval\n"
                             f"{rest_int} min\nrest interval")
     check_start()
-    return work_int, rest_int
+    return work_int, rest_int, break_amount
   except ZeroDivisionError:
     if int(breaks_scale.get()) == 0 or int(rest_scale.get()) == 0:
       final_label.config(text=f"{total_work_mins} min\nwork interval\n"
