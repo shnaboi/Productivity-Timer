@@ -3,23 +3,26 @@ import math
 
 BIG_FONT = ("Courier New", 23, "bold")
 SMALL_FONT = ("Courier New", 10, "normal")
+intervals = None
 
-def start_timer():
+def start_timer(*args):
+  global intervals
   # calculate work & rest time in seconds
-  work_int, rest_int, breaks = update_final_calc()
+  work_int, rest_int = update_final_calc()
   work_sec = math.floor(work_int * 60)
   rest_sec = math.floor(rest_int * 60)
-  intervals = breaks * 2 + 1
   # determine if timer is on a work interval or break interval
   # inside each if/else block, countdown(work_int) OR countdown(rest_int) is called
+  if intervals == None:
+    break_amount = (int(breaks_scale.get()))
+    intervals = (break_amount * 2) + 1
+  print(f"intervals = {intervals}")
   if intervals % 2 == 0:
   #   rest interval
     countdown(rest_sec)
-    intervals - 1
   else:
   #   work interval
     countdown(work_sec)
-    intervals - 1
 
   #  go to def countdown(var)
   # var should be time left in sec
@@ -38,6 +41,7 @@ def start_timer():
   print(work_sec, rest_sec)
 
 def countdown(time_in_sec):
+  global intervals
   min = math.floor(time_in_sec / 60)
   sec = (time_in_sec % 60)
   if sec < 10:
@@ -47,6 +51,7 @@ def countdown(time_in_sec):
   if time_in_sec >= 0:
     window.after(1000, countdown, time_in_sec - 1)
   else:
+    intervals -= 1
     start_timer()
 
 def check_start():
@@ -81,6 +86,7 @@ def calculate_rest_time(value):
   return final_calc
 
 def update_final_calc():
+  global intervals
 # total time in mins, total rest time in mins, break amount
 # rest time divided by break amount (20min break / 2 breaks = two 10min breaks)
 # total time divided by (break amount +1), three 20min sessions
@@ -94,7 +100,7 @@ def update_final_calc():
     final_label.config(text=f"{work_int} min\nwork interval\n"
                             f"{rest_int} min\nrest interval")
     check_start()
-    return work_int, rest_int, break_amount
+    return work_int, rest_int
   except ZeroDivisionError:
     if int(breaks_scale.get()) == 0 or int(rest_scale.get()) == 0:
       final_label.config(text=f"{total_work_mins} min\nwork interval\n"
