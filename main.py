@@ -4,6 +4,7 @@ import math
 BIG_FONT = ("Courier New", 23, "bold")
 SMALL_FONT = ("Courier New", 10, "normal")
 intervals = None
+timer = None
 
 def start_timer(*args):
   global intervals
@@ -17,6 +18,7 @@ def start_timer(*args):
     break_amount = (int(breaks_scale.get()))
     intervals = (break_amount * 2) + 1
   print(f"intervals = {intervals}")
+  button_reset.config(state=ACTIVE)
   if intervals % 2 == 0:
   #   rest interval
     countdown(rest_sec)
@@ -41,7 +43,7 @@ def start_timer(*args):
   print(work_sec, rest_sec)
 
 def countdown(time_in_sec):
-  global intervals
+  global intervals, timer
   min = math.floor(time_in_sec / 60)
   sec = (time_in_sec % 60)
   if sec < 10:
@@ -49,10 +51,16 @@ def countdown(time_in_sec):
   else:
     timer_label.config(text=f"{min}:{sec}")
   if time_in_sec >= 0:
-    window.after(1000, countdown, time_in_sec - 1)
+    timer = window.after(1000, countdown, time_in_sec - 1)
   else:
     intervals -= 1
     start_timer()
+
+def reset_timer():
+  global intervals, timer
+  window.after_cancel(timer)
+  intervals = 0
+
 
 def check_start():
 #   Start button not pushable until total time is defined
@@ -166,7 +174,7 @@ buttons_frame = LabelFrame(text="Start/Reset", width=100, height=125)
 buttons_frame.grid(row=6, rowspan=2, column=3)
 button_start = Button(text="Start", overrelief="groove", pady=2, width=7, command=start_timer, state=DISABLED)
 button_start.grid(row=6, column=3)
-button_reset = Button(text="Reset", overrelief="groove", pady=2, width=7, state=DISABLED)
+button_reset = Button(text="Reset", overrelief="groove", pady=2, width=7, state=DISABLED, command=reset_timer)
 button_reset.grid(row=7, column=3, sticky=N)
 
 # Label: Calculate (for total time avail, rest time, and break amount)
