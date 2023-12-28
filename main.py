@@ -19,6 +19,7 @@ def start_timer(*args):
     intervals = (break_amount * 2) + 1
   print(f"intervals = {intervals}")
   button_reset.config(state=ACTIVE)
+  button_start.config(state=DISABLED)
   if intervals % 2 == 0:
   #   rest interval
     countdown(rest_sec)
@@ -61,6 +62,7 @@ def reset_timer():
   window.after_cancel(timer)
   intervals = None
   timer_label.config(text="00:00")
+  button_start.config(state=ACTIVE)
 
 def check_start():
 #   Start button not pushable until total time is defined
