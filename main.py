@@ -63,6 +63,7 @@ def reset_timer():
   intervals = None
   timer_label.config(text="00:00")
   button_start.config(state=ACTIVE)
+  button_reset.config(state=DISABLED)
 
 def check_start():
 #   Start button not pushable until total time is defined
@@ -115,6 +116,8 @@ def update_final_calc():
     if int(breaks_scale.get()) == 0 or int(rest_scale.get()) == 0:
       final_label.config(text=f"{total_work_mins} min\nwork interval\n"
                               f"0 min\nrest interval")
+      check_start()
+      return total_work_mins, 0
     # else:
     #   final_label.config(text="0 min\nwork interval\n"
     #                           "0 min\nrest interval")
