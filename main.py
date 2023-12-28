@@ -59,8 +59,8 @@ def countdown(time_in_sec):
 def reset_timer():
   global intervals, timer
   window.after_cancel(timer)
-  intervals = 0
-
+  intervals = None
+  timer_label.config(text="00:00")
 
 def check_start():
 #   Start button not pushable until total time is defined
