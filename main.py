@@ -7,7 +7,7 @@ intervals = None
 timer = None
 
 def start_timer(*args):
-  global intervals
+  global intervals, timer
   # calculate work & rest time in seconds
   work_int, rest_int = update_final_calc()
   work_sec = math.floor(work_int * 60)
@@ -20,7 +20,11 @@ def start_timer(*args):
   print(f"intervals = {intervals}")
   button_reset.config(state=ACTIVE)
   button_start.config(state=DISABLED)
-  if intervals % 2 == 0:
+  if intervals == 0:
+    window.after_cancel(timer)
+    timer_label.config(text=timer_text)
+    return
+  elif intervals % 2 == 0:
   #   rest interval
     countdown(rest_sec)
   else:
@@ -52,7 +56,7 @@ def countdown(time_in_sec):
   else:
     timer_label.config(text=f"{min}:{sec}")
   if time_in_sec >= 0:
-    timer = window.after(1000, countdown, time_in_sec - 1)
+    timer = window.after(991, countdown, time_in_sec - 1)
   else:
     intervals -= 1
     start_timer()
