@@ -56,7 +56,7 @@ def countdown(time_in_sec):
   else:
     timer_label.config(text=f"{min}:{sec}")
   if time_in_sec >= 0:
-    timer = window.after(991, countdown, time_in_sec - 1)
+    timer = window.after(990, countdown, time_in_sec - 1)
   else:
     intervals -= 1
     start_timer()
@@ -112,20 +112,24 @@ def update_final_calc():
   try:
     rest_int = round(total_rest_mins / break_amount, 2)
     work_int = round(total_work_mins / (break_amount + 1), 2)
-    final_label.config(text=f"{work_int} min\nwork interval\n"
-                            f"{rest_int} min\nrest interval")
+    if rest_int == 0:
+      final_label.config(text=f"{calc_total_time()} min\nwork interval\n"
+                              f"0.0 min\nrest interval")
+    else:
+      final_label.config(text=f"{work_int} min\nwork interval\n"
+                              f"{rest_int} min\nrest interval")
     check_start()
     return work_int, rest_int
   except ZeroDivisionError:
-    if int(breaks_scale.get()) == 0 or int(rest_scale.get()) == 0:
-      final_label.config(text=f"{total_work_mins} min\nwork interval\n"
-                              f"0 min\nrest interval")
+    if int(breaks_scale.get()) == 0:
+
+      final_label.config(text=f"{calc_total_time()} min\nwork interval\n"
+                              f"0.0 min\nrest interval")
       check_start()
       return total_work_mins, 0
     # else:
     #   final_label.config(text="0 min\nwork interval\n"
     #                           "0 min\nrest interval")
-  check_start()
 
 # UI
 
