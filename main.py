@@ -113,17 +113,17 @@ def update_final_calc():
     rest_int = round(total_rest_mins / break_amount, 2)
     work_int = round(total_work_mins / (break_amount + 1), 2)
     if rest_int == 0:
-      final_label.config(text=f"{calc_total_time()} min\nwork interval\n"
+      final_label.config(text=f"{calc_total_time()} min\nwork interval\n\n"
                               f"0.0 min\nrest interval")
     else:
-      final_label.config(text=f"{work_int} min\nwork interval\n"
+      final_label.config(text=f"{work_int} min\nwork interval\n\n"
                               f"{rest_int} min\nrest interval")
     check_start()
     return work_int, rest_int
   except ZeroDivisionError:
     if int(breaks_scale.get()) == 0:
 
-      final_label.config(text=f"{calc_total_time()} min\nwork interval\n"
+      final_label.config(text=f"{calc_total_time()} min\nwork interval\n\n"
                               f"0.0 min\nrest interval")
       check_start()
       return total_work_mins, 0
@@ -186,21 +186,21 @@ breaks_scale.grid(row=4, column=4, sticky=N)
 buttons_frame = LabelFrame(text="Start/Reset", width=100, height=125)
 buttons_frame.grid(row=6, rowspan=2, column=3)
 button_start = Button(text="Start", overrelief="groove", pady=2, width=7, command=start_timer, state=DISABLED)
-button_start.grid(row=6, column=3)
+button_start.grid(row=6, column=3, sticky=S)
 button_reset = Button(text="Reset", overrelief="groove", pady=2, width=7, state=DISABLED, command=reset_timer)
-button_reset.grid(row=7, column=3, sticky=N)
+button_reset.grid(row=7, column=3)
 
 # Label: Calculate (for total time avail, rest time, and break amount)
 final_frame = LabelFrame(text="Final Calc", width=100, height=125)
 final_frame.grid(row=6, rowspan=2, column=4)
-final_label = Label(text="0min work\n0min rest")
-final_label.grid(row=6, column=4, sticky=S)
+final_label = Label(text="0 min\nwork interval\n\n0.0 min\nrest interval")
+final_label.grid(row=6, column=4, rowspan=2)
 # check_button_state = IntVar()
 # check_button = Checkbutton(text="Window to\nfront", variable=check_button_state)
 # check_button.grid(row=7, column=4)
 
 # Directions
-directions_frame = LabelFrame(text="Directions", width=120, height=140)
+directions_frame = LabelFrame(text="Directions", width=120, height=127)
 directions_frame.grid(row=6, rowspan=2, column=0, columnspan=3)
 directions = Label(text="- Select total time\n- Choose % of time to spend resting\n- Select break interval amount")
 directions.config(wraplength=100, justify=LEFT, anchor=S)
