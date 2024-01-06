@@ -1,7 +1,8 @@
 from tkinter import *
 import math
 
-BIG_FONT = ("Courier New", 23, "bold")
+BIG_FONT = ("Arial", 23, "bold")
+TIMER_FONT = ("Courier New", 23, "bold")
 SMALL_FONT = ("Courier New", 10, "normal")
 intervals = None
 timer = None
@@ -30,20 +31,6 @@ def start_timer(*args):
   else:
   #   work interval
     countdown(work_sec)
-
-  #  go to def countdown(var)
-  # var should be time left in sec
-  # min = math.floor(var / 60)
-  # sec = (var % 60)
-  # if sec < 10 (put 0:09)
-  # text=f"{min}:0{sec}"
-  # else text=f"{min}:{sec}"
-  # if time_left_sec (var) > 0:
-  # window.after(1000, countdown, time_left_sec (var) -1)
-  # else (if there is no time left)
-  # start_timer() is called,
-  # when it is called it determines which interval is next
-  # and countdown() is called at the end of start_timer()
 
   print(work_sec, rest_sec)
 
@@ -102,10 +89,6 @@ def calculate_rest_time(value):
 
 def update_final_calc():
   global intervals
-# total time in mins, total rest time in mins, break amount
-# rest time divided by break amount (20min break / 2 breaks = two 10min breaks)
-# total time divided by (break amount +1), three 20min sessions
-# 20min work, 10m break, 20min work, 10m break, end with 20min work
   total_rest_mins = calculate_rest_time(int(rest_scale.get()))
   total_work_mins = calc_total_time() - total_rest_mins
   break_amount = (int(breaks_scale.get()))
@@ -135,7 +118,8 @@ def update_final_calc():
 
 window = Tk()
 window.title("Productive Timer")
-window.minsize(width=420, height=420)
+window.minsize(width=467, height=407)
+window.maxsize(width=467, height=407)
 window.config(pady=25, padx=25)
 
 # Label: (title) Productivity Timer (use your time efficiently)
@@ -144,7 +128,7 @@ title.grid(row=0, column=3)
 
 # Timer: the 00:00 looking part
 timer_text = "00:00"
-timer_label = Label(text=timer_text, font=BIG_FONT)
+timer_label = Label(text=timer_text, font=TIMER_FONT)
 timer_label.grid(row=1, column=3)
 
 control_frame = LabelFrame(text="Controls", width=420, height=150)
@@ -163,9 +147,9 @@ spinbox_min = Spinbox(from_=0, to=59, width=3, command=time_adjusted)
 spinbox_min.grid(row=4, column=2, sticky=W)
 # Spinbox Labels
 spinbox_hour_label = Label(text="Hour", font=SMALL_FONT)
-spinbox_hour_label.grid(row=5, column=0, sticky=NE)
+spinbox_hour_label.grid(row=4, column=0, sticky=SE)
 spinbox_min_label = Label(text="Min", font=SMALL_FONT)
-spinbox_min_label.grid(row=5, column=2, sticky=NW)
+spinbox_min_label.grid(row=4, column=2, sticky=SW)
 
 # Rest Time
 resting_label = Label(text="Rest Time %", font=SMALL_FONT)
@@ -174,7 +158,7 @@ rest_scale = Scale(orient=HORIZONTAL, to=50, tickinterval=25, command=rest_adjus
 rest_scale.grid(row=4, column=3, sticky=N)
 # Label: {Convert % to mins to show user}
 rest_time_calc_label = Label(text="0.0\nrest mins", font=SMALL_FONT)
-rest_time_calc_label.grid(row=5, column=3)
+rest_time_calc_label.grid(row=5, column=3, sticky=N)
 
 # Input: How many breaks would you like?
 breaks_label = Label(text="Break Amount", font=SMALL_FONT)
@@ -195,9 +179,6 @@ final_frame = LabelFrame(text="Final Calc", width=100, height=125)
 final_frame.grid(row=6, rowspan=2, column=4)
 final_label = Label(text="0 min\nwork interval\n\n0.0 min\nrest interval")
 final_label.grid(row=6, column=4, rowspan=2)
-# check_button_state = IntVar()
-# check_button = Checkbutton(text="Window to\nfront", variable=check_button_state)
-# check_button.grid(row=7, column=4)
 
 # Directions
 directions_frame = LabelFrame(text="Directions", width=120, height=127)
@@ -205,11 +186,6 @@ directions_frame.grid(row=6, rowspan=2, column=0, columnspan=3)
 directions = Label(text="- Select total time\n- Choose % of time to spend resting\n- Select break interval amount")
 directions.config(wraplength=100, justify=LEFT, anchor=S)
 directions.grid(row=6, rowspan=3, column=0, columnspan=3)
-
-# show: [2] 5min breaks after each 25min work period [60mins total])
-
-# Start button
-# Reset button
 
 
 
