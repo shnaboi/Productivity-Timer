@@ -1,5 +1,6 @@
 from tkinter import *
 import math
+import ctypes
 
 BIG_FONT = ("Arial", 23, "bold")
 TIMER_FONT = ("Courier New", 23, "bold")
@@ -7,8 +8,10 @@ SMALL_FONT = ("Courier New", 10, "normal")
 intervals = None
 timer = None
 
+
 def start_timer(*args):
   global intervals, timer
+  bring_to_front()
   # calculate work & rest time in seconds
   work_int, rest_int = update_final_calc()
   work_sec = math.floor(work_int * 60)
@@ -26,13 +29,14 @@ def start_timer(*args):
     timer_label.config(text=timer_text)
     return
   elif intervals % 2 == 0:
-  #   rest interval
+    #   rest interval
     countdown(rest_sec)
   else:
-  #   work interval
+    #   work interval
     countdown(work_sec)
 
   print(work_sec, rest_sec)
+
 
 def countdown(time_in_sec):
   global intervals, timer
@@ -43,10 +47,11 @@ def countdown(time_in_sec):
   else:
     timer_label.config(text=f"{min}:{sec}")
   if time_in_sec >= 0:
-    timer = window.after(990, countdown, time_in_sec - 1)
+    timer = window.after(999, countdown, time_in_sec - 1)
   else:
     intervals -= 1
     start_timer()
+
 
 def reset_timer():
   global intervals, timer
@@ -56,24 +61,29 @@ def reset_timer():
   button_start.config(state=ACTIVE)
   button_reset.config(state=DISABLED)
 
+
 def check_start():
-#   Start button not pushable until total time is defined
+  #   Start button not pushable until total time is defined
   if calc_total_time() == 0:
     button_start.config(state=DISABLED)
   else:
     button_start.config(state=ACTIVE)
 
+
 def time_adjusted():
   update_final_calc()
   calculate_rest_time(int(rest_scale.get()))
+
 
 def breaks_adjusted(value):
   update_final_calc()
   return value
 
+
 def rest_adjusted(value):
   calculate_rest_time(value)
   update_final_calc()
+
 
 def calc_total_time():
   hours = int(spinbox_hour.get())
@@ -81,11 +91,13 @@ def calc_total_time():
   total_mins = int((hours * 60) + mins)
   return total_mins
 
+
 def calculate_rest_time(value):
   total_mins = calc_total_time()
-  final_calc = round(total_mins * (int(value)*.01), 2)
+  final_calc = round(total_mins * (int(value) * .01), 2)
   rest_time_calc_label.config(text=f"{final_calc}\nrest mins")
   return final_calc
+
 
 def update_final_calc():
   global intervals
@@ -105,7 +117,6 @@ def update_final_calc():
     return work_int, rest_int
   except ZeroDivisionError:
     if int(breaks_scale.get()) == 0:
-
       final_label.config(text=f"{calc_total_time()} min\nwork interval\n\n"
                               f"0.0 min\nrest interval")
       check_start()
@@ -113,6 +124,12 @@ def update_final_calc():
     # else:
     #   final_label.config(text="0 min\nwork interval\n"
     #                           "0 min\nrest interval")
+
+
+def bring_to_front():
+  window.lift()
+  window.attributes('-topmost', True)
+  window.attributes('-topmost', False)
 
 # UI
 
@@ -133,7 +150,6 @@ timer_label.grid(row=1, column=3)
 
 control_frame = LabelFrame(text="Controls", width=420, height=150)
 control_frame.grid(row=2, rowspan=4, column=0, columnspan=5)
-
 
 # Total Time spent (How many minutes do you have to work)
 time_input_label = Label(text="Total Time", font=SMALL_FONT)
@@ -186,7 +202,5 @@ directions_frame.grid(row=6, rowspan=2, column=0, columnspan=3)
 directions = Label(text="- Select total time\n- Choose % of time to spend resting\n- Select break interval amount")
 directions.config(wraplength=100, justify=LEFT, anchor=S)
 directions.grid(row=6, rowspan=3, column=0, columnspan=3)
-
-
 
 window.mainloop()
