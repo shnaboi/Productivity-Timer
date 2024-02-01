@@ -1,6 +1,6 @@
 from tkinter import *
 import math
-import ctypes
+import pygame
 
 BIG_FONT = ("Arial", 23, "bold")
 TIMER_FONT = ("Courier New", 23, "bold")
@@ -130,6 +130,11 @@ def bring_to_front():
   window.lift()
   window.attributes('-topmost', True)
   window.attributes('-topmost', False)
+
+#   play sound
+  pygame.mixer.init()
+  pygame.mixer.music.load("./test.mp3")
+  pygame.mixer.music.play()
 
 # UI
 
