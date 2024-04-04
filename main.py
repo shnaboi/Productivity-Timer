@@ -21,8 +21,6 @@ def start_timer(*args):
     break_amount = (int(breaks_scale.get()))
     intervals = (break_amount * 2) + 1
   print(f"intervals = {intervals}")
-  button_reset.config(state=ACTIVE)
-  button_start.config(state=DISABLED)
   manage_controls(True)
   if intervals == 0:
     window.after_cancel(timer)
@@ -61,8 +59,7 @@ def reset_timer():
   window.after_cancel(timer)
   intervals = None
   timer_label.config(text="00:00")
-  button_start.config(state=ACTIVE)
-  button_reset.config(state=DISABLED)
+  manage_controls(False)
 
 
 def check_start():
@@ -149,11 +146,15 @@ def manage_controls(bool):
     spinbox_min.config(state=DISABLED)
     rest_scale.config(state=DISABLED)
     breaks_scale.config(state=DISABLED)
+    button_reset.config(state=ACTIVE)
+    button_start.config(state=DISABLED)
   else:
     spinbox_hour.config(state=NORMAL)
     spinbox_min.config(state=NORMAL)
     rest_scale.config(state=NORMAL)
     breaks_scale.config(state=NORMAL)
+    button_start.config(state=ACTIVE)
+    button_reset.config(state=DISABLED)
 
 # UI
 
