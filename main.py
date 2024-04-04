@@ -11,7 +11,6 @@ timer = None
 
 def start_timer(*args):
   global intervals, timer
-  bring_to_front()
   # calculate work & rest time in seconds
   work_int, rest_int = update_final_calc()
   work_sec = math.floor(work_int * 60)
@@ -24,15 +23,19 @@ def start_timer(*args):
   print(f"intervals = {intervals}")
   button_reset.config(state=ACTIVE)
   button_start.config(state=DISABLED)
+  manage_controls(True)
   if intervals == 0:
     window.after_cancel(timer)
     timer_label.config(text=timer_text)
+    manage_controls(False)
     return
   elif intervals % 2 == 0:
     #   rest interval
+    bring_to_front(intervals)
     countdown(rest_sec)
   else:
     #   work interval
+    bring_to_front(intervals)
     countdown(work_sec)
 
   print(work_sec, rest_sec)
@@ -121,20 +124,36 @@ def update_final_calc():
                               f"0.0 min\nrest interval")
       check_start()
       return total_work_mins, 0
-    # else:
-    #   final_label.config(text="0 min\nwork interval\n"
-    #                           "0 min\nrest interval")
 
 
-def bring_to_front():
+def bring_to_front(int):
   window.lift()
   window.attributes('-topmost', True)
   window.attributes('-topmost', False)
 
 #   play sound
-  pygame.mixer.init()
-  pygame.mixer.music.load("./test.mp3")
-  pygame.mixer.music.play()
+  if int % 2 == 0:
+  #   rest int started
+    pygame.mixer.init()
+    pygame.mixer.music.load("./audio/timer_end.mp3")
+    pygame.mixer.music.play()
+  else:
+    #   work int started
+    pygame.mixer.init()
+    pygame.mixer.music.load("./audio/timer_start.mp3")
+    pygame.mixer.music.play()
+
+def manage_controls(bool):
+  if bool == True:
+    spinbox_hour.config(state=DISABLED)
+    spinbox_min.config(state=DISABLED)
+    rest_scale.config(state=DISABLED)
+    breaks_scale.config(state=DISABLED)
+  else:
+    spinbox_hour.config(state=NORMAL)
+    spinbox_min.config(state=NORMAL)
+    rest_scale.config(state=NORMAL)
+    breaks_scale.config(state=NORMAL)
 
 # UI
 
