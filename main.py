@@ -11,12 +11,15 @@ timer = None
 
 def start_timer(*args):
   global intervals, timer
+
+  work_int_time, rest_int_time = calc_timer_int(check_start())
+
   # calculate work & rest time in seconds
-  work_int, rest_int = update_final_calc()
-  work_sec = math.floor(work_int * 60)
-  rest_sec = math.floor(rest_int * 60)
+  work_sec = math.floor(work_int_time * 60)
+  rest_sec = math.floor(rest_int_time * 60)
+
   # determine if timer is on a work interval or break interval
-  # inside each if/else block, countdown(work_int) OR countdown(rest_int) is called
+  # inside each if/else block, countdown(work_int_time) OR countdown(rest_int_time) is called
   if intervals == None:
     break_amount = (int(breaks_scale.get()))
     intervals = (break_amount * 2) + 1
@@ -92,22 +95,22 @@ def calc_total_time():
 
 
 def check_start():
-  #   Start button not pushable until total time is defined
+  # Start button not pushable until total time is defined
   rest_val = int(rest_scale.get())
   break_val = int(breaks_scale.get())
   if calc_total_time() != 0:
     if rest_val == 0 and break_val == 0:
-      # calc_timer_int() should calc the final timer info
-      # update_final_calc() should then update the display
-      rest_or_break = False
-      calc_timer_int(rest_or_break)
+      # calc_timer_int() should calc the final timer info and display is updated
+      all_params_defined = False
+      calc_timer_int(all_params_defined)
       button_start.config(state=ACTIVE)
+      return all_params_defined
     elif rest_val != 0 and break_val != 0:
-      # calc_timer_int() should calc the final timer info
-      # update_final_calc() should then update the display
-      rest_or_break = True
-      calc_timer_int(rest_or_break)
+      # calc_timer_int() should calc the final timer info and display is updated
+      all_params_defined = True
+      calc_timer_int(all_params_defined)
       button_start.config(state=ACTIVE)
+      return all_params_defined
     else:
       update_final_calc(0,0)
       button_start.config(state=DISABLED)
@@ -127,11 +130,11 @@ def calc_timer_int(bool):
     rest_int_time = round(total_rest_mins / break_amount, 2)
     work_int_time = round(total_work_mins / (break_amount + 1), 2)
     update_final_calc(work_int_time, rest_int_time)
-    # return work_int_time, rest_int_time
+    return work_int_time, rest_int_time
   else:
     # NO REST OR BREAK AMOUNT DEFINED (DIVIDE BY ZERO ERROR), just do normal timer
     update_final_calc(total_work_mins, 0)
-    # return total_work_mins, 0
+    return total_work_mins, 0
 
 
 def update_final_calc(work_val, rest_val):
