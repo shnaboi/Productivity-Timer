@@ -62,39 +62,19 @@ def reset_timer():
   manage_controls(False)
 
 
-def check_start():
-  #   Start button not pushable until total time is defined
-  rest_val = int(rest_scale.get())
-  break_val = int(breaks_scale.get())
-  if calc_total_time() != 0:
-    if rest_val == 0 and break_val == 0:
-      button_start.config(state=ACTIVE)
-    elif rest_val == 0 or break_val == 0:
-      button_start.config(state=DISABLED)
-  else:
-    button_start.config(state=DISABLED)
-
-
 def time_adjusted():
-  update_final_calc()
   calc_rest_time(int(rest_scale.get()))
+  check_start()
 
 
 def breaks_adjusted(value):
-  update_final_calc()
+  check_start()
   return value
 
 
 def rest_adjusted(value):
   calc_rest_time(value)
-  update_final_calc()
-
-
-def calc_total_time():
-  hours = int(spinbox_hour.get())
-  mins = int(spinbox_min.get())
-  total_mins = int((hours * 60) + mins)
-  return total_mins
+  check_start()
 
 
 def calc_rest_time(value):
@@ -104,50 +84,63 @@ def calc_rest_time(value):
   return final_calc
 
 
-def calc_timer_int():
+def calc_total_time():
+  hours = int(spinbox_hour.get())
+  mins = int(spinbox_min.get())
+  total_mins = int((hours * 60) + mins)
+  return total_mins
+
+
+def check_start():
+  #   Start button not pushable until total time is defined
+  rest_val = int(rest_scale.get())
+  break_val = int(breaks_scale.get())
+  if calc_total_time() != 0:
+    if rest_val == 0 and break_val == 0:
+      # calc_timer_int() should calc the final timer info
+      # update_final_calc() should then update the display
+      rest_or_break = False
+      calc_timer_int(rest_or_break)
+      button_start.config(state=ACTIVE)
+    elif rest_val != 0 and break_val != 0:
+      # calc_timer_int() should calc the final timer info
+      # update_final_calc() should then update the display
+      rest_or_break = True
+      calc_timer_int(rest_or_break)
+      button_start.config(state=ACTIVE)
+    else:
+      update_final_calc(0,0)
+      button_start.config(state=DISABLED)
+  else:
+    update_final_calc(0, 0)
+    button_start.config(state=DISABLED)
+
+
+def calc_timer_int(bool):
   total_rest_mins = calc_rest_time(int(rest_scale.get()))
   total_work_mins = calc_total_time() - total_rest_mins
   break_amount = (int(breaks_scale.get()))
 
-  rest_int_time = round(total_rest_mins / break_amount, 2)
-  work_int_time = round(total_work_mins / (break_amount + 1), 2)
-
-
-def update_final_calc():
-  # total_rest_mins = calc_rest_time(int(rest_scale.get()))
-  # total_work_mins = calc_total_time() - total_rest_mins
-  # break_amount = (int(breaks_scale.get()))
-
-  # if either rest time AND break amount == 0, start button should activate normal timer
-  # however if one == 0 but not the other, the start button should be inactive
-
-  try:
+  # check inputed value which determines if rest/break are defined
+  if bool:
+    # rest time and break amount ARE DEFINED
     rest_int_time = round(total_rest_mins / break_amount, 2)
     work_int_time = round(total_work_mins / (break_amount + 1), 2)
+    update_final_calc(work_int_time, rest_int_time)
+    # return work_int_time, rest_int_time
+  else:
+    # NO REST OR BREAK AMOUNT DEFINED (DIVIDE BY ZERO ERROR), just do normal timer
+    update_final_calc(total_work_mins, 0)
+    # return total_work_mins, 0
 
-    if rest_int_time == 0 or break_amount == 0:
-      # no breaks, no rest time, so timer should be one big interval
-      final_label.config(text=f"{calc_total_time()} min\nwork interval\n\n"
-                              f"0.0 min\nrest interval")
-      print("one of them is zero")
-      return work_int_time, 0
-    # elif rest_int_time == 0:
-    #   # no rest percentage,
-    #   final_label.config(text=f"{calc_total_time()} min\nwork interval\n\n"
-    #                           f"0.0 min\nrest interval")
-    #   return work_int_time, 0
-    else:
-      final_label.config(text=f"{work_int_time} min\nwork interval\n\n"
-                              f"{rest_int_time} min\nrest interval")
-    # check_start()
-    return work_int_time, rest_int_time
-  except ZeroDivisionError:
-    if int(breaks_scale.get()):
-      final_label.config(text=f"{calc_total_time()} min\nwork interval\n\n"
-                              f"0.0 min\nrest interval")
-      print("zero divide")
-      # check_start()
-      return total_work_mins, 0
+
+def update_final_calc(work_val, rest_val):
+  if rest_val == 0:
+    final_label.config(text=f"{work_val} min\nwork interval\n\n"
+                            f"0.0 min\nrest interval")
+  else:
+    final_label.config(text=f"{work_val} min\nwork interval\n\n"
+                            f"{rest_val} min\nrest interval")
 
 
 def bring_to_front(int):
