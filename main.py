@@ -32,6 +32,7 @@ def start_timer():
     pygame.mixer.music.load("./audio/timer_end.mp3")
     pygame.mixer.music.play()
     window.after_cancel(timer)
+    intervals = None
     timer_label.config(text=timer_text)
     manage_controls(False)
     return
