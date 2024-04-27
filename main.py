@@ -9,7 +9,7 @@ intervals = None
 timer = None
 
 
-def start_timer(*args):
+def start_timer():
   global intervals, timer
 
   work_int_time, rest_int_time = calc_timer_int(check_start())
@@ -18,14 +18,19 @@ def start_timer(*args):
   work_sec = math.floor(work_int_time * 60)
   rest_sec = math.floor(rest_int_time * 60)
 
-  # determine if timer is on a work interval or break interval
-  # inside each if/else block, countdown(work_int_time) OR countdown(rest_int_time) is called
+  # determine amount of intervals
   if intervals == None:
     break_amount = (int(breaks_scale.get()))
     intervals = (break_amount * 2) + 1
-  print(f"intervals = {intervals}")
+  # print(f"intervals = {intervals}")
+
   manage_controls(True)
+
+  # determine if timer is on a work interval, break interval, or ended
   if intervals == 0:
+    pygame.mixer.init()
+    pygame.mixer.music.load("./audio/timer_end.mp3")
+    pygame.mixer.music.play()
     window.after_cancel(timer)
     timer_label.config(text=timer_text)
     manage_controls(False)
@@ -39,7 +44,7 @@ def start_timer(*args):
     bring_to_front(intervals)
     countdown(work_sec)
 
-  print(work_sec, rest_sec)
+  # print(work_sec, rest_sec)
 
 
 def countdown(time_in_sec):
@@ -95,9 +100,10 @@ def calc_total_time():
 
 
 def check_start():
-  # Start button not pushable until total time is defined
   rest_val = int(rest_scale.get())
   break_val = int(breaks_scale.get())
+
+  # Start button not active until necessary params are defined
   if calc_total_time() != 0:
     if rest_val == 0 and break_val == 0:
       # calc_timer_int() should calc the final timer info and display is updated
@@ -120,6 +126,7 @@ def check_start():
 
 
 def calc_timer_int(bool):
+  # get timer details in mins
   total_rest_mins = calc_rest_time(int(rest_scale.get()))
   total_work_mins = calc_total_time() - total_rest_mins
   break_amount = (int(breaks_scale.get()))
@@ -132,7 +139,7 @@ def calc_timer_int(bool):
     update_final_calc(work_int_time, rest_int_time)
     return work_int_time, rest_int_time
   else:
-    # NO REST OR BREAK AMOUNT DEFINED (DIVIDE BY ZERO ERROR), just do normal timer
+    # NO REST OR BREAK AMOUNT DEFINED, just do normal timer
     update_final_calc(total_work_mins, 0)
     return total_work_mins, 0
 
