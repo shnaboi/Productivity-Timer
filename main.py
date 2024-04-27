@@ -34,14 +34,20 @@ def start_timer():
     window.after_cancel(timer)
     intervals = None
     timer_label.config(text=timer_text)
+    rest_label.grid_forget()
+    work_label.grid_forget()
     manage_controls(False)
     return
   elif intervals % 2 == 0:
     #   rest interval
+    rest_label.grid(row=1, column=4, sticky=W)
+    work_label.grid_forget()
     bring_to_front(intervals)
     countdown(rest_sec)
   else:
     #   work interval
+    work_label.grid(row=1, column=2, sticky=E)
+    rest_label.grid_forget()
     bring_to_front(intervals)
     countdown(work_sec)
 
@@ -204,6 +210,12 @@ timer_text = "00:00"
 timer_label = Label(text=timer_text, font=TIMER_FONT)
 timer_label.grid(row=1, column=3)
 
+work_label = Label(text="work", font=SMALL_FONT)
+# work_label.grid(row=1, column=2, sticky=E)
+
+rest_label = Label(text="rest", font=SMALL_FONT)
+# rest_label.grid(row=1, column=4, sticky=W)
+
 control_frame = LabelFrame(text="Controls", width=420, height=150)
 control_frame.grid(row=2, rowspan=4, column=0, columnspan=5)
 
@@ -260,3 +272,7 @@ directions.config(wraplength=100, justify=LEFT, anchor=S)
 directions.grid(row=6, rowspan=3, column=0, columnspan=3)
 
 window.mainloop()
+
+# TODO: Display whether work or rest interval
+# TODO: Calculate times in seconds if they are less than a minute
+# TODO: Maximize and minimize window displays only the time and interval
