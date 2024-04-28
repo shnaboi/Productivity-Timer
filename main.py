@@ -46,7 +46,7 @@ def start_timer():
     countdown(rest_sec)
   else:
     #   work interval
-    work_label.grid(row=1, column=2, sticky=E)
+    work_label.grid(row=1, column=2)
     rest_label.grid_forget()
     bring_to_front(intervals)
     countdown(work_sec)
@@ -74,6 +74,8 @@ def reset_timer():
   window.after_cancel(timer)
   intervals = None
   timer_label.config(text="00:00")
+  rest_label.grid_forget()
+  work_label.grid_forget()
   manage_controls(False)
 
 
