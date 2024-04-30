@@ -156,10 +156,25 @@ def calc_timer_int(bool):
 def update_final_calc(work_val, rest_val):
   if rest_val == 0:
     final_label.config(text=f"{work_val} min\nwork interval\n\n"
-                            f"0.0 min\nrest interval")
+                            f"0 min\nrest interval")
   else:
-    final_label.config(text=f"{work_val} min\nwork interval\n\n"
-                            f"{rest_val} min\nrest interval")
+    if work_val < 1:
+      work_val *= 60
+      work_sec = True
+    if rest_val < 1:
+      rest_val *= 60
+      rest_sec = True
+
+    if rest_sec:
+      if work_sec:
+        final_label.config(text=f"{work_val} sec\nwork interval\n\n"
+                                f"{rest_val} sec\nrest interval")
+      else:
+        final_label.config(text=f"{work_val} min\nwork interval\n\n"
+                                f"{rest_val} sec\nrest interval")
+    else:
+      final_label.config(text=f"{work_val} min\nwork interval\n\n"
+                              f"{rest_val} min\nrest interval")
 
 
 def bring_to_front(int):
@@ -263,7 +278,7 @@ button_reset.grid(row=7, column=3)
 # Label: Calculate (for total time avail, rest time, and break amount)
 final_frame = LabelFrame(text="Final Calc", width=100, height=125)
 final_frame.grid(row=6, rowspan=2, column=4)
-final_label = Label(text="0 min\nwork interval\n\n0.0 min\nrest interval")
+final_label = Label(text="0 min\nwork interval\n\n0 min\nrest interval")
 final_label.grid(row=6, column=4, rowspan=2)
 
 # Directions
@@ -275,6 +290,5 @@ directions.grid(row=6, rowspan=3, column=0, columnspan=3)
 
 window.mainloop()
 
-# TODO: Display whether work or rest interval
 # TODO: Calculate times in seconds if they are less than a minute
 # TODO: Maximize and minimize window displays only the time and interval
