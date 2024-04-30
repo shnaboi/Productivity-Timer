@@ -154,15 +154,17 @@ def calc_timer_int(bool):
 
 
 def update_final_calc(work_val, rest_val):
+  work_sec = None
+  rest_sec = None
   if rest_val == 0:
     final_label.config(text=f"{work_val} min\nwork interval\n\n"
                             f"0 min\nrest interval")
   else:
     if work_val < 1:
-      work_val *= 60
+      work_val = round(work_val * 60, 2)
       work_sec = True
     if rest_val < 1:
-      rest_val *= 60
+      rest_val = round(rest_val * 60, 2)
       rest_sec = True
 
     if rest_sec:
@@ -290,5 +292,4 @@ directions.grid(row=6, rowspan=3, column=0, columnspan=3)
 
 window.mainloop()
 
-# TODO: Calculate times in seconds if they are less than a minute
 # TODO: Maximize and minimize window displays only the time and interval
